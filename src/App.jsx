@@ -9,27 +9,29 @@ import useElementSize from "./core/hooks/useElementSize";
 const App = () => {
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const [headerRef, { height }] = useElementSize();
-  const [city, setCity] = useState("tehran");
+  const [region, setRegion] = useState("tehran");
   const [weatherData, setWeatherData] = useState({});
 
   const getApiUrl = (city = "tehran") => {
-    return `http://api.weatherapi.com/v1/forecast.json?key=393ff1ad03194b0691760511231403&q=${city}&days=3&aqi=no&alerts=no
+    return `${import.meta.env.BASE_URL}/v1/forecast.json?key=${import.meta.env.API_KEY}&q=${city}&days=3&aqi=no&alerts=no
     `;
   };
-
+  useEffect(()=>{
+    console.log(import.meta);
+  },[])
 
   const search = (tyedCity) => {
     return new Promise(async (res) => {
       try {
-        const list = await fetch(`http://api.weatherapi.com/v1/search.json?key=393ff1ad03194b0691760511231403&q=${tyedCity}`,
+        const list = await fetch(`${import.meta.env.BASE_URL}/v1/search.json?key=${import.meta.env.API_KEY}&q=${tyedCity}`,
           { method: "GET" }).then(res => res.json())
-          if(list.length>0){
-            res(list.map(it => ({ label: it.name, value: it.name })))
-          }
-          else{
-            res([])
-          }
-          
+        if (list.length > 0) {
+          res(list.map(it => ({ label: it.name, value: it.name })))
+        }
+        else {
+          res([])
+        }
+
       } catch { res([]) }
     })
   }
@@ -47,19 +49,19 @@ const App = () => {
 
 
   useEffect(() => {
-    if (city)
-      getCallApi(city);
+    if (region)
+      getCallApi(region);
     else getCallApi("tehran");
-  }, [city]);
+  }, [region]);
 
   return (
     <div className="weather-app">
       <Header
         ref={headerRef}
-        city={city}
+        city={region}
         loadOptions={search}
         handleCityChange={(c) => {
-          setCity(c.value)
+          setRegion(c.value)
         }}
       />
       <div
