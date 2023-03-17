@@ -1,0 +1,38 @@
+.side-bar {
+  width: 270px;
+  background-color: #ffffff;
+  ul {
+    width: 100%;
+    li {
+      padding: 30px 40px;
+      cursor: pointer;
+      width: 100%;
+      background-color: transparent;
+      transition: all 0.3s;
+      button {
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        font-size: 17px !important;
+        align-items: center;
+        &:hover {
+          background-color: transparent;
+        }
+      }
+    }
+  }
+}
+.header {
+  padding: 30px 50px;
+  width: 100%;
+  h2 {
+    font-size: 25px;
+    font-weight: 600;
+  }
+
+}
+
+.side-active {
+  background-color: #42068d !important;
+  color: #f6eeff;
+}
