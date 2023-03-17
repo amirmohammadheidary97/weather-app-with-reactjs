@@ -5,6 +5,7 @@ import SideBar from "./core/layout/SideBar";
 import Header from "./core/layout/Header";
 import ContentBody from "./components/ContentBody";
 import useElementSize from "./core/hooks/useElementSize";
+import { requests_weather } from "./core/service/api";
 
 const App = () => {
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
@@ -12,46 +13,27 @@ const App = () => {
   const [region, setRegion] = useState("tehran");
   const [weatherData, setWeatherData] = useState({});
 
-  const getApiUrl = (city = "tehran") => {
-    return `${import.meta.env.BASE_URL}/v1/forecast.json?key=${import.meta.env.API_KEY}&q=${city}&days=3&aqi=no&alerts=no
-    `;
-  };
-  useEffect(()=>{
-    console.log(import.meta);
-  },[])
-
-  const search = (tyedCity) => {
-    return new Promise(async (res) => {
-      try {
-        const list = await fetch(`${import.meta.env.BASE_URL}/v1/search.json?key=${import.meta.env.API_KEY}&q=${tyedCity}`,
-          { method: "GET" }).then(res => res.json())
-        if (list.length > 0) {
-          res(list.map(it => ({ label: it.name, value: it.name })))
-        }
-        else {
-          res([])
-        }
-
-      } catch { res([]) }
+  const search = (tyedRegion) => {
+    new Promise((res, rej) => {
+      requests_weather.requests_search(tyedRegion).
+        then(resp => {
+          if (resp?.data?.length > 0) {
+            res(list.map(it => ({ label: it.name, value: it.name })))
+          }
+          else {
+            res([])
+          }
+        }).catch(() => { res([]) })
     })
   }
 
-  const getCallApi = async (c) => {
-    fetch(getApiUrl(c), { method: "GET" })
-      .then(resp => resp.json())
-      .then(resp => {
-        setWeatherData(resp)
-      })
-      .catch(res => {
-        console.log(res);
-      })
-  };
-
+  const getForecast = async (region) => requests_weather.requests_forecast(region).then(resp=>{
+    console.log(resp);
+  })
 
   useEffect(() => {
     if (region)
-      getCallApi(region);
-    else getCallApi("tehran");
+      getForecast(region);
   }, [region]);
 
   return (
